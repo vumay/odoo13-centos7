@@ -1,0 +1,77 @@
+---
+- name: Install all dependencies and tools
+  yum:
+   update_cache: yes
+   name:
+    - git
+    - wget
+    - gcc
+    - wget
+    - libxslt-devel
+    - bzip2-devel
+    - openldap-devel
+    - libjpeg-devel
+    - freetype-devel
+    - nodejs
+    - rh-python36
+    - nodejs-less
+    - yum-utils
+   state: present
+
+- name: Add Odoo system user
+  user: name=odoo shell=/bin/bash
+        password=odoo update_password=on_create
+        system=False
+
+- name: Create log directory
+  file: path=/var/log/odoo state=directory
+        owner=odoo group=odoo force=no
+
+
+- import_tasks: postgre.yml
+
+- name: Add Odoo system user
+  user: name=odoo shell=/bin/bash
+        password=password update_password=on_create
+        system=False
+
+- name: Clone project repository (Git)
+  become: yes
+  become_user: odoo
+  git:
+    repo: https://www.github.com/odoo/odoo.git
+    dest: /opt/odoo
+    version: "13.0"
+    depth: 1
+    force: yes
+  notify: Restart Odoo
+
+- name: Install Odoo dependencies from SCL
+  import_tasks: scl.yml
+  when: odoo_install_type == 'standard'
+
+- name: Creates directory
+  file:
+    path: /opt/odoo/odoo13-custom-addons
+    state: directory
+    owner: odoo
+    group: odoo
+    mode: 0775
+    recurse: yes
+
+- name: Generate Odoo configuration file
+  template: src=odoo-13.0.conf dest=/etc/odoo.conf
+        owner=odoo group=odoo mode=0600
+        force=yes
+        backup=yes
+  notify: Restart Odoo
+
+# script du role de coopdevs ( fichier a revuperer dans le dossier templates )
+- name: Copy systemd service
+  become: yes
+  template:
+    src: "odoo.service.j2"
+    dest: "/etc/systemd/system/odoo13.service"
+    mode: 02775
+    owner: odoo
+    group: odoo

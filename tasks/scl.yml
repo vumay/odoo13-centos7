@@ -1,0 +1,57 @@
+- name: Upgrade all packages
+  become: yes
+  yum:
+    name: '*'
+    state: latest
+
+- name: "Install Software Collections Package rh-python36"
+  become: true
+  yum:
+    name: rh-python36
+    state: present
+
+- name: "Install PIP for Python: rh-python36"
+  become: true
+  easy_install:
+    name: pip
+    executable: /usr/bin/scl enable rh-python36 -- easy_install
+
+- name: Create rh-python36 PIP wrapper executable
+  become: true
+  copy:
+    dest: "/usr/local/bin/scl-pip-rh-python36-executable"
+    content: |
+      #!/bin/sh
+      source scl_source enable rh-python36
+      exec pip "$@"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+
+
+- name: "Install PIP: wheel for Python: rh-python36"
+  become: true
+  pip:
+    name: wheel
+    state: present
+    executable: "/usr/local/bin/scl-pip-rh-python36-executable"
+
+#- name: Download the pip requirements file
+#  become: yes
+#  become_user: odoo
+#  get_url: url=https://raw.githubusercontent.com/odoo/odoo/13.0/requirements.txt
+#           force=yes
+#           dest=/home/odoo/odoo/requirements.txt
+- name: Create Python virtual env and install multiple packages inside the virtual env
+  pip:
+    requirements: /opt/odoo/requirements.txt
+    virtualenv: /opt/odoo/odoo13
+    virtualenv_python: python3.6
+
+#- name: Install Odoo depedencies
+#  become: yes
+#  pip:
+#    requirements: /home/odoo/odoo/requirements.txt
+#    state: forcereinstall
+#    executable: "/usr/local/bin/scl-pip-rh-python36-executable"
