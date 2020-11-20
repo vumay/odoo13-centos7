@@ -1,0 +1,16 @@
+---
+- name: odoo13
+  hosts: localhost
+  become: true
+  pre_tasks:
+    - block:
+        - name: Install EPEL repo
+          package: name=epel-release state=present
+          when: ansible_distribution == "CentOS"
+
+        - name: Install SCL centos repo
+          package: name=centos-release-scl state=present
+          when: ansible_distribution == "CentOS"
+
+  roles:
+    - role: odoo13-centos7
