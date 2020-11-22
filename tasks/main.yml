@@ -35,6 +35,15 @@
         password=password update_password=on_create
         system=False
 
+- name: Creates directory
+  file:
+    path: /opt/odoo
+    state: directory
+    owner: odoo
+    group: odoo
+    mode: 0775
+    recurse: yes
+
 - name: Clone project repository (Git)
   become: yes
   become_user: odoo
@@ -44,11 +53,9 @@
     version: "13.0"
     depth: 1
     force: yes
-  notify: Restart Odoo
 
 - name: Install Odoo dependencies from SCL
   import_tasks: scl.yml
-  when: odoo_install_type == 'standard'
 
 - name: Creates directory
   file:

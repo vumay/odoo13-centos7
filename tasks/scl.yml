@@ -29,7 +29,6 @@
     mode: "0755"
 
 
-
 - name: "Install PIP: wheel for Python: rh-python36"
   become: true
   pip:
@@ -46,8 +45,7 @@
 - name: Create Python virtual env and install multiple packages inside the virtual env
   pip:
     requirements: /opt/odoo/requirements.txt
-    virtualenv: /opt/odoo/odoo13
-    virtualenv_python: python3.6
+    executable: "/usr/local/bin/scl-pip-rh-python36-executable"
 
 #- name: Install Odoo depedencies
 #  become: yes

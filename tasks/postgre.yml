@@ -10,24 +10,27 @@
   yum:
     name:
       - postgresql10-server
-      - postgresql0-devel
-    state: latest
+      - postgresql10-devel
+      - postgresql10-contrib
+      - postgresql10-plpython
+      - python-psycopg2
+    state: present
 
 - name: Initialize postgres if necessary
   command: /usr/pgsql-10/bin/postgresql-10-setup initdb
   args:
-    creates: /var/lib/pgsql/data/postgresql.conf
+    creates: /var/lib/pgsql/10/data/postgresql.conf
 
-#- name: Distribute Postgresql config files
-#  template:
-#    src: "{{ item }}.j2"
-#    dest: "/var/lib/pgsql/data/{{ item }}"
-#    mode: 0600
-#  with_items:
-#    - postgresql.conf
-#    - pg_hba.conf
-#  notify:
-#    - restart_postgresql
+- name: Distribute Postgresql config files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/var/lib/pgsql/10/data/{{ item }}"
+    mode: 0600
+  with_items:
+    - postgresql.conf
+    - pg_hba.conf
+  notify:
+    - restart_postgresql
 
 - name: Ensuring postgresql is started and enabled
   service:
@@ -41,9 +44,6 @@
     password: password
     role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
   become_user: postgres
-  with_items: odoo
-  loop_control:
-    label: "{{ item.name }}"
 
 - name: Creating Postgresql Databases
   postgresql_db:
@@ -51,9 +51,6 @@
     owner: odoo
     encoding: UTF-8
   become_user: postgres
-  with_items: db
-  loop_control:
-    label: "{{ item.name }}"
 
 - name: Granting DB rights to identified user
   postgresql_user:
@@ -63,6 +60,3 @@
     db: db
     priv: 'ALL'
   become_user: postgres
-  with_items: odoo
-  loop_control:
-    label: "{{ item.name }}"

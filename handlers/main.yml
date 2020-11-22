@@ -1,0 +1,12 @@
+---
+# handlers file for postgresql
+
+- name: restart_postgresql
+  service:
+    name: postgresql10
+    state: restarted
+
+- name: Restart Odoo
+  service:
+    name: odoo
+    state: restarted
