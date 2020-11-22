@@ -38,25 +38,3 @@
     state: started
     enabled: True
 
-- name: Creating Users if not empty list
-  postgresql_user:
-    name: odoo
-    password: password
-    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
-  become_user: postgres
-
-- name: Creating Postgresql Databases
-  postgresql_db:
-    name: db
-    owner: odoo
-    encoding: UTF-8
-  become_user: postgres
-
-- name: Granting DB rights to identified user
-  postgresql_user:
-    name: odoo
-    password: password
-    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
-    db: db
-    priv: 'ALL'
-  become_user: postgres

@@ -16,6 +16,7 @@
     name: pip
     executable: /usr/bin/scl enable rh-python36 -- easy_install
 
+
 - name: Create rh-python36 PIP wrapper executable
   become: true
   copy:
@@ -27,7 +28,6 @@
     owner: "root"
     group: "root"
     mode: "0755"
-
 
 - name: "Install PIP: wheel for Python: rh-python36"
   become: true
@@ -42,10 +42,13 @@
 #  get_url: url=https://raw.githubusercontent.com/odoo/odoo/13.0/requirements.txt
 #           force=yes
 #           dest=/home/odoo/odoo/requirements.txt
+
+
 - name: Create Python virtual env and install multiple packages inside the virtual env
   pip:
     requirements: /opt/odoo/requirements.txt
-    executable: "/usr/local/bin/scl-pip-rh-python36-executable"
+    virtualenv: /opt/odoo
+    virtualenv_python: python3.6
 
 #- name: Install Odoo depedencies
 #  become: yes

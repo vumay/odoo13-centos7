@@ -16,6 +16,7 @@
     - rh-python36
     - nodejs-less
     - yum-utils
+    - python-setuptools
    state: present
 
 - name: Add Odoo system user
