@@ -40,19 +40,10 @@
     state: present
     executable: "/usr/local/bin/scl-pip-rh-python36-executable"
 
-- name: Download the pip requirements file
+
+- name: Install Odoo depedencies
   become: yes
-  become_user: odoo
-  easy_install:
-  get_url: url=https://raw.githubusercontent.com/odoo/odoo/13.0/requirements.txt
-           force=yes
-           dest=/home/odoo/odoo/requirements.txt
-  executable: /usr/bin/scl enable rh-python36 -- easy_install
-
-
-#- name: Install Odoo depedencies
-#  become: yes
-#  pip:
-#    requirements: /home/odoo/odoo/requirements.txt
-#    state: forcereinstall
-#    executable: "/usr/local/bin/scl-pip-rh-python36-executable"
+  pip:
+    requirements: /opt/odoo/requirements.txt
+    state: forcereinstall
+    executable: "/usr/local/bin/scl-pip-rh-python36-executable"

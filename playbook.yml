@@ -11,8 +11,8 @@
         - name: Install SCL centos repo
           package: name=centos-release-scl state=present
           when: ansible_distribution == "CentOS"
-    - block : 
 
+    - block :
         - name: Create user
           remote_user: root
           become: yes
@@ -29,4 +29,5 @@
           become: true
           become_user: postgres
   roles:
-    - role: tasks/scl.yml
+    - role: odoo13-centos7
+ 

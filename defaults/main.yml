@@ -26,8 +26,8 @@ pgsql_tls_ca: ca.crt
 pgsql_hba_clients:
   - type: local
     database: all
-    user: postgres
-    auth_method: peer
+    user: all
+    auth_method: trust
   - type: local
     database: all
     user: all
@@ -46,16 +46,16 @@ pgsql_hba_clients:
 # Do we want default users and databases to be created
 # By default empty list
 # example
-#pgsql_users:
- # - name: odoo
-  #  password: password
-   # role_attr: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
-    #db: database1
+pgsql_users:
+- name: odoo
+  password: password
+  role_attr: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
+  db: database1
 #pgsql_users: []
 
 # Same for Databases
 # example:
-#pgsql_databases:
- # - name: database1
- # "  owner: odoo
+pgsql_databases:
+- name: database1
+  owner: odoo
 #pgsql_databases: []     

@@ -8,5 +8,5 @@
 
 - name: Restart Odoo
   service:
-    name: odoo
+    name: odoo13
     state: restarted
