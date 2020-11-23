@@ -38,37 +38,6 @@
     state: started
     enabled: True
 
-- name: Creating Users if not empty list
-  postgresql_user:
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
-  become_user: postgres
-  with_items: "{{ pgsql_users }}"
-  loop_control:
-    label: "{{ item.name }}"
-
-- name: Creating Postgresql Databases
-  postgresql_db: 
-    name: "{{ item.name }}" 
-    owner: "{{ item.owner }}" 
-    encoding: UTF-8
-  become_user: postgres
-  with_items: "{{ pgsql_databases }}"
-  loop_control:
-    label: "{{ item.name }}"
-
-- name: Granting DB rights to identified user
-  postgresql_user:
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
-    db: "{{ item.db }}"
-    priv: 'ALL'
-  become_user: postgres
-  with_items: "{{ pgsql_users }}"
-  loop_control:
-    label: "{{ item.name }}"
 
 - name: Opening up postgresql tcp port
   include_role:
@@ -83,8 +52,3 @@
   with_items: "{{ pgsql_network_subnets }}"
   tags:
     - iptables
-# Backup
-- name: Ensuring backup user and jobs
-  include_role:
-    name: centos-backup
-    tasks_from: client
